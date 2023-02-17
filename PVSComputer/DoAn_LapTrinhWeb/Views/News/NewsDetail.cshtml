@@ -1,0 +1,325 @@
+﻿@model DoAn_LapTrinhWeb.Models.News
+@{
+    ViewBag.Title = Model.news_title;
+    ViewBag.ImageURL = Model.image2;
+    ViewBag.Keyword = Model.meta_title;
+    ViewBag.Decription = Model.meta_title;
+    ViewBag.Tag = Model.meta_title;
+    Layout = "~/Views/Shared/Main_Layout.cshtml";
+    var relatedpost = (List<DoAn_LapTrinhWeb.Models.News>)ViewBag.relatedpost;
+}
+<!-- section -->
+@section scripts{
+    <!--chia sẻ ảnh, bài viết, sản phẩm lên fb, instagram,...-->
+    <script src="~/Scripts/my_js/button_share_fb.js"></script>
+    <script>
+        var limit = 3;
+        $("#limitshow_tag li").each(function (index) {
+            if (index >= limit) {
+                $(this).hide();
+            }
+        });
+    </script>
+    <script>
+        var sticky = new Sticky('[data-sticky]', {});
+    </script>
+}
+<section class="margin_mobile_fixed">
+    <div class="container mt-20px mb-20px">
+        <div class="row">
+            <!--start blog-->
+            <div class="col-lg-8">
+                <div class="boder_sidebar">
+                    <div class="blog_section">
+                        <div>
+                            <p class="blog_head">@Model.news_title</p>
+                            <div class="post_info d-flex mt-20px">
+                                <div class="pe-2" style="color:#005ec4">@Model.Accounts.Name</div>
+                                <div class="pe-2" style="color:#999"><i class="fa fa-comments" aria-hidden="true"></i>&nbsp;@ViewBag.countcomment</div>
+                                <div class="pe-2" style="color:#999"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;@Model.ViewCount</div>
+                                <div class="pe-2" style="color:#999"><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;@Model.create_at.ToString("dd") tháng @Model.create_at.ToString("M yyyy H:mm")</div>
+                            </div>
+                        </div>
+                        <div class="content_raw">
+                            @Html.Raw(Model.news_content)
+                        </div>
+                        <div>
+                            <ul>
+                                @foreach (var item in ViewBag.newsproducts)
+                                {
+                                    <li class="list_productnews">
+                                        <div>
+                                            <div class="pd_image_news">
+                                                <img class="img_productnews" src="@item.Product.image" />
+                                            </div>
+                                            <div class="pd_infor_news">
+                                                <a class="name_productnews" href="/san-pham/@item.Product.slug">@item.Product.product_name</a>
+                                                @if (item.Product.Discount.discount_start < DateTime.Now && item.Product.Discount.discount_end > DateTime.Now && item.Product.Discount.status == "1")
+                                                {
+                                                    <span class="price_product_news">@((item.Product.price - item.Product.Discount.discount_price).ToString("#,###₫"))</span>
+                                                    <div class="text-success price_dcproduct_news">Giảm @item.Product.Discount.discount_price.ToString("#,###₫")</div>
+                                                    <div>
+                                                        <a href="/san-pham/@item.Product.slug" class="viewdetail">Xem chi tiết</a>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <span class="price_product_news">@item.Product.price.ToString("#,###₫")</span>
+                                                    <div>
+                                                        <a href="/san-pham/@item.Product.slug" class="viewdetail">Xem chi tiết</a>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="bottom_info">
+                            <div class="pull-left">
+                                <div class="tag_list">
+                                    <ul id="limitshow_tag">
+                                        @foreach (var newstags in ViewBag.newstags)
+                                        {
+                                            <li>
+                                                <a href="/tags/@newstags.Tags.slug">@newstags.Tags.tag_name</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="pull-right">
+                                <div class="shr">Share: </div>
+                                <div class="social_icon">
+                                    <ul>
+                                        <li class="fb"><a style="cursor:pointer" id="fb-share-button"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                        <li class="twi"><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                        <li class="gp"><a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li>
+                                        <li class="pint"><a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comment_section">
+                            <div class="pull-left text_align_left">
+                                <div class="full">
+                                    <div class="preview_commt">
+                                        <a class="comment_cantrol preview_commat disable_scale_img" href="@Url.Action("NewsDetail","News")"> <img class="img-responsive transition" src="https://cdn.tgdd.vn/Files/2021/07/20/1369437/iphone12series_1280x720-300x200.jpg" alt="#"> <span><i class="fa fa-angle-left"></i> Bài viết trước</span> </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pull-right text_align_right">
+                                <div class="full">
+                                    <div class="next_commt">
+                                        <a class="comment_cantrol preview_commat disable_scale_img" href="@Url.Action("NewsDetail","News")"> <img class="img-responsive transition" src="https://cdn.tgdd.vn/Files/2021/07/20/1369517/redminote-10_1280x720-300x200.jpg" alt="#"> <span>Bài viết kế tiếp <i class="fa fa-angle-right"></i></span> </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="view_commant">
+                            @foreach (var item in ViewBag.comment)
+                            {
+                                if (item.status == "1")
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-1">
+                                            <div class="full"> <img class="img-responsive" style="max-width:40px" src="@item.Accounts.Avatar" alt="#"> </div>
+                                        </div>
+                                        <div class="col-lg-11">
+                                            <div class="full color-comment white_fonts command_cont">
+                                                <p class="comm_head">@item.Accounts.Name<span>@item.create_at.ToString("dd/MM/yyy HH:mm")</span><a class="rply" href="it_blog_detail.html">Reply</a></p>
+                                                <p>
+                                                    @item.comment_content
+                                                </p>
+                                            </div>
+                                            <div class="full">
+                                                <div class="row">
+                                                    <div class="col-lg-1">
+                                                        <div class="full"> <img class="img-responsive" style="max-width:40px" src="~/Images/svg/avatars/005-girl-2.svg" alt="#"> </div>
+                                                    </div>
+                                                    <div class="col-lg-11">
+                                                        <div class="full pd_reply_comment command_cont margin_bottom_0">
+                                                            <p class="comm_head">Christian Perez <span>April 27,2018</span><a class="rply" href="it_blog_detail.html">Reply</a></p>
+                                                            <p>
+                                                                magine you are 10 years into the future but this time it’s different. Why? Because starting today you actually
+                                                                begin making changes in your life. Specific intentional changes are not easy. They are
+                                                                intentional because these changes are changes.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-1">
+                                                        <div class="full"> <img class="img-responsive" style="max-width:40px" src="~/Images/svg/avatars/003-girl-1.svg" alt="#"> </div>
+                                                    </div>
+                                                    <div class="col-lg-11">
+                                                        <div class="full pd_reply_comment command_cont">
+                                                            <p class="comm_head">Christian Perez <span>April 27,2018</span><a class="rply" href="#">Reply</a></p>
+                                                            <p>
+                                                                magine you are 10 years into the future but this time it’s different. Why? Because starting today you actually
+                                                                begin making changes in your life. Specific intentional changes are not easy. They are
+                                                                intentional because these changes are changes.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <div class="post_commt_form mb-10px">
+                            <h4 class="h4">Để lại bình luận của bạn tại đây</h4>
+                            <div class="form_section">
+                                <form class="form_contant" action="#">
+                                    <fieldset class="row">
+                                        <div class="field col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <textarea class="field_custom" placeholder="Comment" required></textarea>
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                            <button class="btn bg-button">Gửi bình luận</button>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                        <!--begin::related post-->
+                        <div class="related_post">
+                            <h4 class="title_sidebar">
+                                <span class="title_sidebar_content">Bài viết liên quan</span>
+                            </h4>
+                            <div class="row">
+                                @foreach (var item in relatedpost)
+                                {
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="margin_related_post"><a href="/tin-tuc/chu-de/@item.ChildCategory.slug" class="me-2 category_sidebar_url">@item.ChildCategory.name</a><a href="/tin-tuc/@item.slug"><img class="img_related_post" src="@item.image2" alt="@item.slug"></a></div>
+                                        <a href="/tin-tuc/@item.slug" class="post-url-side-bar">
+                                            @item.news_title
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <!--end::related post-->
+                    </div>
+                </div>
+            </div>
+            <!--end blog-->
+            <div class="col-lg-4">
+                <div> </div>
+                <div class="featured-posts w100dt mb-10px boder_sidebar">
+                    <div class="top-post-sidebar">
+                        <h4 class="title_sidebar">
+                            <span class="title_sidebar_content">Bài viết hot</span>
+                        </h4>
+                        <!-- /.sidebar-title -->
+                        <div class="sidebar-posts">
+                            @foreach (var item in ViewBag.hotnews)
+                            {
+                                <div class="card">
+                                    <div class="card-image mb-2">
+                                        <img src="@item.image2" alt="Image">
+                                        <span class="effect"></span>
+                                    </div>
+                                    <!-- /.card-image -->
+                                    <div class="card-content w100dt">
+                                        <p>
+                                            <a href="#" class="tag left w100dt l-blue">@item.ChildCategory.ParentCategory.name</a>
+                                        </p>
+                                        <a href="/tin-tuc/@item.slug" class="card-title post-url-side-bar">
+                                            @item.news_title
+                                        </a>
+                                        <div class="d-flex justify-content-between">
+                                            <ul class="post-mate-time left">
+                                                <li>
+                                                    <p class="hero left fs-12px">
+                                                        <a href="#" class="l-blue">@item.Accounts.Name</a>
+                                                    </p>
+                                                </li>
+                                            </ul>
+                                            <ul class="post-mate right d-flex">
+                                                <li class="like fs-12px">
+                                                    <a href="#">
+                                                        <i class="fa fa-eye" aria-hidden="true"></i> @item.ViewCount
+                                                    </a>
+                                                </li>
+                                                <li class="comment fs-12px">
+                                                    @{int totalcoment = 0; ;
+                                                        foreach (var comment in ViewBag.newslistcomment)
+                                                        {
+                                                            if (comment.news_id == item.news_id)
+                                                            {
+                                                                totalcoment++;
+                                                            }
+                                                        }
+                                                        <a href="#">
+                                                            <i class="fa fa-comment" aria-hidden="true"></i> @totalcoment
+                                                        </a>
+                                                    }
+
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <!-- /.card-content -->
+                                </div>
+                            }
+                        </div>
+                        <!-- /.sidebar-posts -->
+                    </div>
+                </div>
+                <!-- /.featured-posts -->
+                @if (ViewBag.newstags.Count > 0)
+                {
+                    <div class="blog_right_sidebar boder_sidebar">
+                        <aside class="single_sidebar_widget tag_cloud_widget">
+                            <h4 class="title_sidebar">
+                                <span class="title_sidebar_content">Tags</span>
+                            </h4>
+                            <ul class="list">
+                                @foreach (var newstags in ViewBag.newstags)
+                                {
+                                    <li>
+                                        <a href="/tags/@newstags.Tags.slug">@newstags.Tags.tag_name</a>
+                                    </li>
+                                }
+                            </ul>
+                        </aside>
+                    </div>
+                }
+                <div class="side_bar_blog boder_sidebar" data-sticky data-sticky-wrap>
+                    <h4 class="title_sidebar">
+                        <span class="title_sidebar_content">Bài viết gần đây</span>
+                    </h4>
+                    <div class="recent_post">
+                        <ul>
+                            @foreach (var item in ViewBag.recentnews)
+                            {
+                                <li>
+                                    <div class="post_head"><a href="/tin-tuc/@item.slug">@item.news_title</a></div>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="post_date"><a href="/tin-tuc/chu-de/@item.ChildCategory.slug" class="me-2 category_sidebar_url">@item.ChildCategory.name</a><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;<span class="text-muted">@item.create_at.ToString("dd/MM/yyy")</span></div>
+                                        <div class="post_date text-muted">
+                                            @{int totalcoment = 0;
+                                                foreach (var comment in ViewBag.newslistcomment)
+                                                {
+                                                    if (comment.news_id == item.news_id)
+                                                    {
+                                                        totalcoment++;
+                                                    }
+                                                }
+                                                <i class="fa fa-comments" aria-hidden="true"></i> @totalcoment
+                                            }
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end section -->

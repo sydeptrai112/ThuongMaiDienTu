@@ -1,0 +1,25 @@
+﻿@model IEnumerable<DoAn_LapTrinhWeb.Model.ParentGenres>
+@foreach (var item in Model)
+{
+    <!--begin::Danh sách thể loại sản phẩm-->
+    <li>
+        <a class="d-flex" href="/danh-muc/@item.slug">
+            <span class="material-icons">@item.icon</span><div id="elementID">@item.name</div>
+            @if (item.Genres.Count > 0)
+            {
+                <span class="material-icons">arrow_drop_down</span>
+            }
+        </a>
+        <ul>
+            @foreach (var product in ViewBag.productsgenres)
+            {
+                if (product.parent_genre_id == item.id)
+                {
+                    <li><a href="/danh-muc/@product.slug">@product.genre_name</a></li>
+                }
+            }
+        </ul>
+    </li>
+    <!--end::Danh sách thể loại sản phẩm-->
+}
+

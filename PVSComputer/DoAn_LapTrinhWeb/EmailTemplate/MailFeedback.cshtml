@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+        }
+        .im {
+            color: #202124;
+        }
+        .im p{
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <p>- ID đánh giá: {{FeedbackId}}</p>
+        <p>- Sản phẩm đánh giá: <a href="{{productslug}}" style="text-decoration:none;">{{Productname}}</a></p>
+        <p>- Ngày đánh giá: {{CreateAt}}</p>
+        <p>- Nội dung đánh giá: {{Feedbackcontent}}</p><br>
+        <p> Trân trọng, {{RolesName}} - {{Roles}} - Hotline: 0374812594 </p>
+        <p><strong>* Đây là email tự động vui lòng không phản hồi lại. Nếu có thắc mắc vui lòng liên hệ qua email: phamsy113.spm@gmail.com</strong></p>
+    </div>
+</body>
+</html>

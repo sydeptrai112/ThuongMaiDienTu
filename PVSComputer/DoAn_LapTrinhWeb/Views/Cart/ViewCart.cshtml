@@ -1,0 +1,189 @@
+﻿@using DoAn_LapTrinhWeb.Models
+@using DoAn_LapTrinhWeb.Common
+@model IEnumerable<Product>
+@{
+    ViewBag.Title = "Giỏ hàng";
+    Layout = "~/Views/Shared/Main_Layout.cshtml";
+    List<int> quans = ViewBag.Quans as List<int>;
+    double totalPrice = 0d;
+    double shippingFee = 30000d;    // Phí vận chuyển 30k
+}
+@section scripts{
+    <script src="~/Scripts/my_js/cart_js/cart.js"></script>
+}
+<!--begin::Container-->
+<div class="container mb_viewcart margin_mobile_fixed">
+    <div class="center-noleftright">
+        <!--begin::Row-->
+        <div class="row center">
+            <!--begin::Col-->
+            <div class="col-md-9">
+                <div class="Module Module-181">
+                    <div class="ModuleContent">
+                        <!--begin::Section-->
+                        <section class="cart-step">
+                            <div class="cart-overlay"></div>
+                            <!--begin::Cart Title-->
+                            <div class="cart-title">
+                                <i class="material-icons">shopping_cart</i>
+                                <!--begin::Count Product-->
+                                <span>Giỏ hàng của bạn (có <strong id="cartCount">0</strong> sản phẩm)</span>
+                                <!--end::Count Product-->
+                            </div>
+                            <!--end::Cart Title-->
+                            <!--begin::Action-->
+                            <div class="btn-wrap">
+                                <!--begin::Button-->
+                                <a class="btn-back font_family_ChakraPetchbolditalic" href="/">Tiếp tục mua hàng</a>
+                                <!--end::Button-->
+                            </div>
+                            <!--end::Action-->
+                            <!--begin::Card Table-->
+                            <div class="cart-table" id="style-5">
+                                @for (int i = 0; i < Model.Count(); i++)
+                                {
+                                    var item = Model.ElementAt(i);
+                                    var quan = quans[i];
+                                    var price = item.price;
+                                    int maxquantity = Int32.Parse(item.quantity);
+
+                                    if (item.Discount != null)
+                                    {
+                                        if (item.Discount.discount_start < DateTime.Now && item.Discount.discount_end > DateTime.Now && item.Discount.status.Trim() == "1")
+                                        {
+                                            price = item.price - item.Discount.discount_price;
+                                        }
+                                    }
+                                    totalPrice += quan * price;
+                                    <!--begin::Product Item-->
+                                    <div class="item ">
+                                        <div class="cart-item ">
+                                            <a class="img" href="/san-pham/@item.slug">
+                                                <img src="@(item.image)" alt="@item.product_name">
+                                            </a>
+                                            <div class="caption col-md-3">
+                                                <!--begin::Product Info-->
+                                                <div class="item-info">
+                                                    <a class="name" href="/san-pham/@item.slug">@item.product_name</a>
+                                                    <!--begin::quantity-->
+                                                    <div class="amount">
+                                                        Số lượng:
+                                                        <div class="quantity_cart">
+                                                            <button class="btn bg-transparent value-button btn-dec" data-action="minus"><span class="material-icons"> remove </span></button>
+                                                            @if (quan>= maxquantity)
+                                                            {
+                                                                <input type="number" autocomplete="off" class="qty-input" min="1" max="@item.quantity" data-price="@price" data-id="@item.product_id" value="@item.quantity" name="quantity" oninput="validity.valid || (value = '');" title="số lượng" style="background: transparent;" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="number" autocomplete="off" class="qty-input" min="1" max="@item.quantity" data-price="@price" data-id="@item.product_id" value="@quan" name="quantity" oninput="validity.valid || (value = '');" title="số lượng" style="background: transparent;" />
+                                                            }
+                                                            <button class="btn bg-transparent value-button btn-inc" data-action="add"><span class="material-icons"> add </span></button>
+                                                        </div>
+                                                        <a style="color: #005ec4;" href="#" class="js-delete" data-id="@item.product_id">Xoá</a>
+                                                    </div>
+                                                    <!--end::quantity-->
+                                                </div>
+                                                <!--end::Product Info-->
+                                                <!--begin::Price-->
+                                                <div class="item-price">
+                                                    <div class="new">@price.ToString("#,0₫")</div>
+                                                </div>
+                                                <!--end::Price-->
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <!--end::Product Item-->
+                                }
+                            </div>
+                            <!--end::Card Table-->
+                            <!--begin::Row-->
+                            <div class="row">
+                                <!--begin::Col-->
+                                <div class="col-12 col-md-8">
+                                    <div class="cart-coupon">
+                                        <!--begin::Apply Discount-->
+                                        <div class="input-coupon">
+                                            <!--class="btn-submitcoupon",class="coupon-apply-error" | path: Scripts/my_js/cart_js/cart.js-->
+                                            <input type="text" autocomplete="off" max-length="20" placeholder="Nhập mã giảm giá">
+                                            <button class="btn-submitcoupon">Áp dụng</button>
+                                            <div class="coupon-apply-error"></div>
+                                        </div>
+                                        <!--end::Apply Discount-->
+                                    </div>
+                                </div>
+                                <!--end::Col-->
+                                <!--begin::Col-->
+                                <div class="col-12 col-md-4 ">
+                                    <!--begin::Cart Total-->
+                                    <div class="cart-total fw-normal">
+                                        <!--begin::Total Price-->
+                                        <div class="group">
+                                            <div class="label">Tạm tính:</div>
+                                            <div class="value" id="totalPrice">@totalPrice.ToString("#,0₫")</div>
+                                        </div>
+                                        <!--end::Tatal Price-->
+                                        <!--begin::Discount Price-->
+                                        <div class="group">
+                                            <div class="label">
+                                                Giảm giá:
+                                            </div>
+                                            <!--id="discount" | path: Scripts/my_js/cart_js/cart.js-->
+                                            @if (Session["Discount"] != null)
+                                            {
+                                                <div class="value" style="color:forestgreen" id="discount">@ViewBag.Discount.ToString("#,0₫")</div>
+                                            }
+                                            else
+                                            {
+                                                <div class="value" style="color:forestgreen" id="discount">0₫</div>
+                                            }
+                                        </div>
+                                        <!--begin::Discount Price-->
+                                        <!--begin::Shiping Price-->
+                                        <div class="group">
+                                            <div class="label">
+                                                Phí vận chuyển:
+                                            </div>
+                                            <div class="value shipping-total">@shippingFee.ToString("#,0₫")</div>
+                                        </div>
+                                        <!--end::Shiping Price-->
+                                        <!--begin::Final Total Price-->
+                                        <div class="group total">
+                                            <div class="label">
+                                                Thành tiền:
+                                            </div>
+                                            <div class="value order-total" id="totalPriceWithFee">@((totalPrice + shippingFee).ToString("#,0₫"))</div>
+                                        </div>
+                                        <!--end::Final Total Price-->
+                                    </div>
+                                    <!--end::Cart Total-->
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Row-->
+                            <!--begin::Row-->
+                            <div class="row float-right mt-3 me-0">
+                                @if (User.IsInRole(Const.ROLE_ADMIN_NAME) || User.IsInRole(Const.ROLE_EDITOR_NAME) || User.IsInRole(Const.ROLE_MODERATOR_NAME))
+                                {
+                                    //Role quản trị sẽ hiện nt
+                                    <a href="" class="disabled-href rounded-100px p-1 ps-3 pe-3 btn-danger text-uppercase">For User</a>
+                                }
+                                else
+                                {
+                                    //bấm vô đây sẻ gọi Logged User của controller Account, nếu bạn đã đăng nhập thì sẻ vào thẳng trang thanh toán
+                                    <a href="@Url.Action("Checkout","Cart")" class="btn-continue js-checkout text-uppercase">Thanh toán</a>
+                                }
+                            </div>
+                            <!--end::Row-->
+                        </section>
+                        <!--end::Section-->
+                    </div>
+                </div>
+            </div>
+            <!--end::Col-->
+        </div>
+        <!--end::Row-->
+    </div>
+</div>
+<!--end::Container-->

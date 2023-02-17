@@ -1,0 +1,88 @@
+﻿@model DoAn_LapTrinhWeb.Models.Contact
+@{
+    ViewBag.Title = "Gửi yêu cầu hỗ trợ";
+}
+@using (Html.BeginForm("SentRequest", "Home", null, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <!--begin::Section-->
+    <section class="section padding_layout_1">
+        <!--begin::Container-->
+        <div class="container mt-30px">
+            <!--begin::Row-->
+            <div class="row center">
+                <!--begin::Col-->
+                <div class="col-xl-8">
+                    <!--begin::Row-->
+                    <div class="row">
+                        <div class="full">
+                            <!--begin::Col-->
+                            <div class="col-lg-12">
+                                <!--begin::Title Head-->
+                                <div class=" text_align_center">
+                                    <p class="h2">YÊU CẦU HỖ TRỢ</p><br>
+                                    <p class="mb-20px">Cảm ơn quý khách đã quan tâm đến dịch vụ của chúng tôi. Vui lòng để lại thông tin, chúng tôi sẽ liên hệ với quý khách trong thời gian sớm nhất.</p>
+                                </div>
+                                <!--end::Title Head-->
+                            </div>
+                            <!--end::Col-->
+                            <!--begin::Col-->
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 appointment_form">
+                                <div class="form_section">
+                                    <!--begin::Form-->
+                                    <form action="Home/Savedata" class="form_contant">
+                                        <!--begin::Fieldset-->
+                                        <fieldset class="row">
+                                            <!--begin::Input Form Group-->
+                                            <div class="field col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <label>Họ tên: </label>
+                                                @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "field_custom", @type = "text", @required = "required", placeholder = "Nhập họ tên" } })
+                                                @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                                            </div>
+                                            <!--end::Input Form Group-->
+                                            <!--begin::Input Form Group-->
+                                            <div class="field col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                <label>Điện thoại: </label>
+                                                @Html.EditorFor(model => model.phone, new { htmlAttributes = new { @class = "field_custom", @required = "required", id = "inputform_number", placeholder = "Nhập số điện thoại" } })
+                                                @Html.ValidationMessageFor(model => model.phone, "", new { @class = "text-danger" })
+                                            </div>
+                                            <!--end::Input Form Group-->
+                                            <!--begin::Input Form Group-->
+                                            <div class="field col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                <label>Email: </label>
+                                                @Html.EditorFor(model => model.email, new { htmlAttributes = new { @class = "field_custom", @required = "required", placeholder = "Nhập Email" } })
+                                                @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+                                            </div>
+                                            <!--end::Input Form Group-->
+                                            <!--begin::Input Form Group-->
+                                            <div class="field col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <label>Nội dung: </label>
+                                                <textarea name="content" placeholder="Nhập nội dung" required oninvalid="this.setCustomValidity('Enter User Name Here')" oninput="this.setCustomValidity('')" class="field_custom"></textarea>
+                                                @Html.ValidationMessageFor(model => model.content, "", new { @class = "text-danger" })
+                                            </div>
+                                            <!--begin::Action-->
+                                            <div class="center mb-5">
+                                                <!--begin::Button-->
+                                                <button type="submit" class="btn bg-button rounded-100px">GỬI YÊU CẦU</button>
+                                                <!--end::Button-->
+                                            </div>
+                                            <!--end::Action-->
+                                        </fieldset>
+                                        <!--end::Fieldset-->
+                                    </form>
+                                    <!--end::Form-->
+                                </div>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                    </div>
+                    <!--end:Row-->
+                </div>
+                <!--end:Col-->
+            </div>
+            <!--end:Row-->
+        </div>
+        <!--begin::Container-->
+    </section>
+    <!--end::Section-->
+}

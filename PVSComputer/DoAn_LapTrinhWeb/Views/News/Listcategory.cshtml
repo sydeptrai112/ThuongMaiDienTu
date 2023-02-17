@@ -1,0 +1,17 @@
+﻿@model IEnumerable<DoAn_LapTrinhWeb.Models.ParentCategory>
+<li><a href="@Url.Action("AllListNews", "News")">Mới nhất</a></li>
+@foreach (var item in Model) 
+{
+<li>
+    <a href="/tin-tuc/danh-muc/@item.slug">@item.name</a>
+    <ul>
+        @foreach (var childcategory in ViewBag.newscategory)
+        {
+            if (childcategory.parentcategory_id == item.parentcategory_id)
+            {
+                <li><a href="/tin-tuc/chu-de/@childcategory.slug">@childcategory.name</a></li>
+            }
+        }
+    </ul>
+</li>
+}

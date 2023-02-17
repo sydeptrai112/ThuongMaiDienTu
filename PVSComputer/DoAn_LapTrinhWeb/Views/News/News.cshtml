@@ -1,0 +1,146 @@
+﻿@using PagedList
+@model IPagedList<DoAn_LapTrinhWeb.Models.News>
+@{
+    ViewBag.Title = ViewBag.ListName;
+    ViewBag.ImageURL = "/Images/ImagesCollection/tin-tuc.jpg";
+    ViewBag.Decription = "";
+    ViewBag.Tag = "Tin tức";
+    Layout = "~/Views/Shared/Main_Layout.cshtml";
+    var listtag = (List<DoAn_LapTrinhWeb.DTOs.NewsDTO>)ViewBag.listtag;
+}
+@section scripts{
+    <script src="~/Scripts/my_js/search_post.js"></script>
+}
+<section class="blog_area margin_mobile_fixed">
+    <div class="container mb-20px">
+        @*<div class="font_roboto_medium_italic fs-25px d-flex justify-content-center mt-10px mb-20px">@ViewBag.ListName</div>*@
+        <div class="d-flex justify-content-between breadcumb_news">
+            <div class="">
+                <h4>@ViewBag.ListName</h4>
+            </div>
+            <div class="dropdown_product_list">
+                <a href="#" class="dropdown-toggle dropdown_sort" data-bs-toggle="dropdown" aria-expanded="false">
+                    @if (ViewBag.sortname == null)
+                    {
+                        <span>Bộ lọc</span>
+                    }
+                    else
+                    {
+                        @ViewBag.sortname
+                    }
+                </a>
+                <!--begin::Dropdown Menu-->
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <!--begin::Dropdown Item-->
+                    <li><a class="dropdown-item" href="@Url.Action(@ViewBag.UrlType,"News", new {s=ViewBag.Search, sortOrder = ViewBag.ResetSort })">Reset bộ lọc</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="@Url.Action(@ViewBag.UrlType,"News", new { sortOrder = ViewBag.DateSortParm})">Cũ - Mới</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="@Url.Action(@ViewBag.UrlType,"News", new { sortOrder = ViewBag.NameSortParm})">Tên A - Z</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="@Url.Action(@ViewBag.UrlType,"News", new { sortOrder = ViewBag.ViewSortParm})">Xem nhiều</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="@Url.Action(@ViewBag.UrlType,"News", new { sortOrder = ViewBag.CommentSortParm})">Bình luận nhiều</a></li>
+                    <!--end::Dropdown Item-->
+                </ul>
+                <!--end::Dropdown Menu-->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 mb-5 mb-lg-0">
+                <div class="blog_left_sidebar">
+                    @if (Model.Count == 0)
+                    {
+                        <span class="h2 text-danger center mt-100px">Không có bài viết</span>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+
+                            <article class="blog_item">
+                                <div class="blog_item_img">
+                                    <img class="card-img rounded-0" src="@item.image" alt="">
+                                    <a href="/tin-tuc/@item.slug" class="blog_item_date">
+                                        <h3>@item.create_at.ToString("dd")</h3>
+                                        <p>Tháng @item.create_at.ToString("MM")</p>
+                                    </a>
+                                </div>
+
+                                <div class="blog_details">
+                                    <a class="d-inline-block" href="/tin-tuc/@item.slug">
+                                        <h2>@item.news_title</h2>
+                                    </a>
+                                    <ul class="blog-info-link">
+                                        <li><a href="#"><i class="fa fa-user"></i> @item.Accounts.Name</a></li>
+                                        <li><a href="#"><i class="fa fa-comments"></i> @item.NewsComments.Count</a></li>
+                                    </ul>
+                                </div>
+                            </article>
+                        }
+                        <nav class="blog-pagination justify-content-center d-flex">
+                            @Html.Partial("Pager", Model)
+                        </nav>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="blog_right_sidebar">
+                    <aside class="single_sidebar_widget search_widget">
+                        <form action="@Url.Action("SearchResult", "News")">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="search" class="form-control" id="news_title" name="s" placeholder='Tìm kiếm bài viết'
+                                           onfocus="this.placeholder = ''"
+                                           onblur="this.placeholder = 'Tìm kiếm bài viết'">
+                                    <div class="input-group-append">
+                                        <button class="btns" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </aside>
+                    <aside class="single_sidebar_widget post_category_widget">
+                        <h4 class="title_sidebar">
+                            <span class="title_sidebar_content">Danh mục</span>
+                        </h4>
+                        <ul class="list cat-list">
+                            @foreach (var category in ViewBag.category)
+                            {
+                                <li>
+                                    <a href="/tin-tuc/danh-muc/@category.slug" class="d-flex">
+                                        <p>@category.name</p>
+                                        @{int countnewscategory = 0;
+                                            foreach (var childcategory in ViewBag.newscategory)
+                                            {
+                                                if (childcategory.parentcategory_id == category.parentcategory_id)
+                                                {
+                                                    countnewscategory++;
+                                                }
+                                            }
+                                            <p>(@countnewscategory)</p>
+                                        }
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </aside>
+                    <aside class="single_sidebar_widget tag_cloud_widget margin_tag_cloud_widget">
+                        <h4 class="title_sidebar">
+                            <span class="title_sidebar_content">Tags</span>
+                        </h4>
+                        <ul class="list">
+                            @foreach (var tags in listtag)
+                            {
+                                <li>
+                                    <a href="/tags/@tags.tag_slug">@tags.tag_name</a>
+                                </li>
+                            }
+                        </ul>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================Blog Area =================-->
